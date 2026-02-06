@@ -89,7 +89,7 @@ def new_request_data_builder(
 def _maybe_warmup_context(limit: int, world_size: int, rank: int):
     global _inside_warmup_mode
     warmup_context = contextlib.nullcontext
-    if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn":
+    if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only"):
         from torch_sendnn import warmup_mode  # ty: ignore
 
         warmup_context = warmup_mode
@@ -328,7 +328,7 @@ class SpyreWorker(WorkerBase):
             torch_profiler_trace_dir = envs.VLLM_TORCH_PROFILER_DIR
             logger.info("Profiling enabled. Traces will be saved to: %s", torch_profiler_trace_dir)
 
-            if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn":
+            if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only"):
                 logger.info(
                     "Traces will contain AIU events if PyTorch with"
                     " AIU profiling support is installed."
@@ -374,7 +374,7 @@ class SpyreWorker(WorkerBase):
 
         torch._C._distributed_c10d._register_process_group("default", dist.group.WORLD)
 
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn":
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only"):
             spyre_setup.spyre_dist_setup(
                 rank=self.rank, world_size=self.parallel_config.world_size, verbose=True
             )
@@ -428,7 +428,7 @@ class SpyreWorker(WorkerBase):
 
             if self.parallel_config.world_size > 1:
                 self.init_distributed_environment()
-            elif envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn":
+            elif envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only"):
                 spyre_setup.spyre_setup()
 
             ensure_model_parallel_initialized(

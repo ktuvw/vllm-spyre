@@ -752,7 +752,7 @@ class SpyrePlatform(Platform):
         # hard-coded value for max_num_batched_tokens with chunked prefill
         if (
             envs_spyre.VLLM_SPYRE_USE_CHUNKED_PREFILL
-            and envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn"
+            and envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only")
             and os.getenv("VLLM_DT_CHUNK_LEN") is None
         ):
             logger.info("Setting --max-num-batched-tokens to 1024 for chunked prefill")
@@ -795,7 +795,7 @@ class SpyrePlatform(Platform):
 
     @classmethod
     def sendnn_configured(cls) -> bool:
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn":
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only"):
             try:
                 from torch_sendnn._version import __version__ as version_str  # ty: ignore[unresolved-import]
 

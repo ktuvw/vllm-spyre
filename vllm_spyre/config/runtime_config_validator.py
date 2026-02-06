@@ -180,7 +180,7 @@ def validate_runtime_configuration(
     the requested configuration to all the supported configurations.
     """
     # we only validate runtime configurations when running on Spyre cards
-    if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND != "sendnn":
+    if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND not in ("sendnn", "sendnn_compile_only"):
         logger.info(
             "Model and runtime configuration validation bypassed for backend '%s'",
             envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND,
