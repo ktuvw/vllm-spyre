@@ -145,6 +145,11 @@ class SpyrePlatform(Platform):
             os.environ["FLEX_OVERWRITE_NMB_FRAME"] = "false"
             os.environ["COMPILATION_MODE"] = "offline"
 
+        # set env var based on backend
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND:
+            os.environ["FLEX_DEVICE"] = "COMPILE"
+        logger.info("Using backend %s", envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
+
         assert (
             envs_spyre.VLLM_SPYRE_USE_CHUNKED_PREFILL and envs_spyre.VLLM_SPYRE_USE_CB
         ) or not envs_spyre.VLLM_SPYRE_USE_CHUNKED_PREFILL, (
