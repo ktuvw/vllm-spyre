@@ -146,7 +146,7 @@ class SpyrePlatform(Platform):
             os.environ["COMPILATION_MODE"] = "offline"
 
         # set env var based on backend
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND:
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn_compile_only":
             os.environ["FLEX_DEVICE"] = "COMPILE"
         logger.info("Using backend %s", envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
 
