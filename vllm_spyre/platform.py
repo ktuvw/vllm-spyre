@@ -142,6 +142,10 @@ class SpyrePlatform(Platform):
             os.environ["FLEX_OVERWRITE_NMB_FRAME"] = "false"
             os.environ["COMPILATION_MODE"] = "offline"
 
+        logger.info("Using backend: %s", envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn_compile_only":
+            os.environ["FLEX_DEVICE"] = "COMPILE"
+
         assert (
             envs_spyre.VLLM_SPYRE_USE_CHUNKED_PREFILL and envs_spyre.VLLM_SPYRE_USE_CB
         ) or not envs_spyre.VLLM_SPYRE_USE_CHUNKED_PREFILL, (
@@ -208,7 +212,7 @@ class SpyrePlatform(Platform):
 
         # Apply model-specific configurations using the registry
         # Only when running on Spyre device (sendnn backend)
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn":
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only"):
             from vllm_spyre.config.model_registry import get_model_registry
 
             registry = get_model_registry()
@@ -687,7 +691,7 @@ class SpyrePlatform(Platform):
 
     @classmethod
     def sendnn_configured(cls) -> bool:
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn":
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only"):
             try:
                 from torch_sendnn._version import __version__ as version_str  # ty: ignore[unresolved-import]
 

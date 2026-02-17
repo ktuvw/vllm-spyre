@@ -29,7 +29,7 @@ except ImportError:
     print("WARNING: Disabled: dynamo_tracer")
     pass
 
-BACKEND_LIST = ["sendnn", "inductor"]
+BACKEND_LIST = ["sendnn", "sendnn_compile_only", "inductor"]
 
 logger = init_logger(__name__)
 
@@ -69,7 +69,7 @@ class SpyreCausalLM(nn.Module):
         self.n_pads_right = 0
 
         self._mask_dtype = (
-            torch.float16 if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn" else torch.float32
+            torch.float16 if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ("sendnn", "sendnn_compile_only") else torch.float32
         )
 
         # FMS Model
@@ -98,7 +98,7 @@ class SpyreCausalLM(nn.Module):
             self.model.past_key_value_states = None
 
         extra_kwargs: dict[str, Any] = {}
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND != "sendnn":
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND not in ("sendnn", "sendnn_compile_only"):
             # Bug in 2.3.1 fixed in 2.4.1 for SDPA flash
             # cpu impl when padding too much
             extra_kwargs["attn_algorithm"] = "math"
