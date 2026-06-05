@@ -309,7 +309,11 @@ class SpyrePoolingModelRunner(
 
         if task == "embed":
             if self.model_config.architecture in FMS_POOLING_MODEL_LIST:
-                self._model = fms_get_model("hf_pretrained", self.model_config.model, data_type=torch.float16,)
+                self._model = fms_get_model(
+                    "hf_pretrained",
+                    self.model_config.model,
+                    data_type=torch.float16,
+                )
                 self._model = self._model.base_model
             else:
                 self._model = AutoModel.from_pretrained(self.model_config.model)
@@ -557,7 +561,8 @@ class SpyrePoolingModelRunner(
         # get position ids and attention mask
         if self.model_config.architecture in FMS_POOLING_MODEL_LIST:
             input_tokens, padding_kwargs = fms_pad_input_ids(
-                input_token_list, min_pad_length=min_pad_length_batch,
+                input_token_list,
+                min_pad_length=min_pad_length_batch,
             )
             position_ids = padding_kwargs["position_ids"]
             mask = padding_kwargs["mask"]
