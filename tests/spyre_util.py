@@ -277,7 +277,7 @@ register_model_info(
 )
 register_model_info(
     name="Qwen/Qwen3-Embedding-0.6B",
-    revision="5cf2132abc99cad020ac570b19d031efec650f2b",
+    revision="97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
 )
 register_model_info(
     name="cross-encoder/stsb-roberta-large",
